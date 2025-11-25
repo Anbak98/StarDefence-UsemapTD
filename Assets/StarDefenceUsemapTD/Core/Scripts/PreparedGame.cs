@@ -12,16 +12,26 @@ namespace STARTD.Core
 
         public PreparedGame(int stageIdx)
         {
-            Life = new Life(1000);
-            Mineral = new Mineral(0);
-            Gold = new Gold(1000);
+            Life = new Life(1000, 1000);
+            Mineral = new Mineral(500, 1000);
+            Gold = new Gold(10000, 10000);
         }
 
         public Stage.Stage Stage => throw new System.NotImplementedException();
 
         public void StartGame()
         {
-            SDSceneLoader.LoadScene();
+            SDSceneLoader.LoadScene(1);
+        }
+
+        public void RestartGame()
+        {
+            SDSceneLoader.LoadScene(1);
+        }
+
+        public void ExitGame()
+        {
+            SDSceneLoader.LoadScene(0);
         }
     }
 }

@@ -24,6 +24,7 @@ namespace STARTD.Core.Stage
             int height = tileBounds.size.y;
 
             int[,] tileIdxs = new int[width, height];
+            int[,] towerIdxs = new int[width, height];
 
             for (int x = 0; x < width; x++)
             {
@@ -50,8 +51,24 @@ namespace STARTD.Core.Stage
                     }
                 }
             }
+            Navigation playerBase = new Navigation();
 
-            return new Stage(tileIdxs, navigations, portalNavigations);
+            for (int y = 0; y < height; ++y)
+            {
+                for (int x = 0; x < width; ++x)
+                {
+                    if (tileIdxs[x, y] == (int)ETileBase.Base)
+                    {
+                        playerBase = new Navigation()
+                        {
+                            x = x,
+                            y = y,
+                        };
+                    }
+                }
+            }
+
+            return new Stage(tileIdxs, towerIdxs, navigations, portalNavigations, playerBase);
         }
 
         // 런타임 이전에 계산하면 좋겠는 걸. c++ constexpr같은 문법? 혹은 json?

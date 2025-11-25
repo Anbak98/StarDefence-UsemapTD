@@ -2,6 +2,6 @@ namespace STARTD.Core.Stage
 {
     public interface IStageCreator
     {
-        bool CreateStageTiles(Stage stage);
+        bool ChangeTile(int x, int y, int tileIdx);
     }
 }

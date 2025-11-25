@@ -7,9 +7,9 @@ namespace STARTD.Core
 {
     public static class SDSceneLoader
     {
-        public static void LoadScene()
+        public static void LoadScene(int index)
         {
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(index);
         }
     }
 }

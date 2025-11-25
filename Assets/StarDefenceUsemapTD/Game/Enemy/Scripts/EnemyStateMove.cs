@@ -1,20 +1,25 @@
 using STARTD.Core.Stage;
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 namespace STARTD.Game.Enemy
 {
-    public class EnemyStateMove : MonoBehaviour
+    public class EnemyStateMove : BaseEnemyState
     {
-        public float moveSpeed = 2f;
+        private float moveSpeed = 2f;
+        private Vector3 targetWorldPos;
+        private bool hasTarget = false;
 
-        [SerializeField] private Vector3 targetWorldPos;
-        [SerializeField] private bool hasTarget = false;
-
-        void Update()
+        public override void Enter(Action<Type> callback)
         {
+            base.Enter(callback);
+
+            Debug.Log(transform.position);
+        }
+
+        public override void Execute()
+        {
+            base.Execute();
             Move();
         }
 
@@ -35,7 +40,7 @@ namespace STARTD.Game.Enemy
             );
 
             // 목적지 도착?
-            if (Vector3.Distance(transform.position, targetWorldPos) < 0.01f)
+            if (Vector3.Distance(transform.position, targetWorldPos) < 0.1f)
             {
                 hasTarget = false;
             }
@@ -45,26 +50,43 @@ namespace STARTD.Game.Enemy
         {
             Vector3Int cellPos = StageManager.Singleton.TileMap.WorldToCell(transform.position);
 
-            int x = cellPos.x - StageManager.Singleton.TileMap.cellBounds.xMin;
-            int y = cellPos.y - StageManager.Singleton.TileMap.cellBounds.yMin;
+            int cx = cellPos.x - StageManager.Singleton.TileMap.cellBounds.xMin;
+            int cy = cellPos.y - StageManager.Singleton.TileMap.cellBounds.yMin;
 
-            // Navigation 얻기
-            Navigation nav = StageManager.Singleton.CurStage.navigations[x, y];
+            foreach (var towerRange in StageManager.Singleton.CurStage?.towerRangeIdxs?[cx, cy])
+            {
+                towerRange.ClearTarget(behaviour);
+            }
 
-            // 목적지가 없으면 멈춤
-            if (nav.nx == -1)
+            Navigation nav = StageManager.Singleton.CurStage.navigations[cx, cy];
+
+            // 목적지 도착 → 공격 상태 전환
+            if (nav.nx == StageManager.Singleton.CurStage.player.x &&
+                nav.ny == StageManager.Singleton.CurStage.player.y)
+            {
+                onDone?.Invoke(typeof(EnemyStateAttack));
+                return;
+            }
+
+            // 이동할 수 없는 경우
+            if (nav.nx < 0 || nav.ny < 0)
                 return;
 
-            
-            Vector3 nextCell = StageManager.Singleton.TileMap.CellToWorld(
-                        new Vector3Int(
-                            nav.nx + StageManager.Singleton.TileMap.cellBounds.xMin,
-                            nav.ny + StageManager.Singleton.TileMap.cellBounds.yMin, 
-                            0)
-                    );
-            // 타일의 정중앙으로 이동
-            nextCell += new Vector3(StageManager.Singleton.TileMap.cellSize.x, StageManager.Singleton.TileMap.cellSize.y, 0) * 0.5f;
+            int nx = nav.nx;
+            int ny = nav.ny;
 
+            foreach (var towerRange in StageManager.Singleton.CurStage?.towerRangeIdxs?[nx, ny])
+            {
+                towerRange.SetTarget(behaviour);
+            }
+
+            Vector3 nextCell = StageManager.Singleton.TileMap.CellToWorld(
+                new Vector3Int(
+                    nx + StageManager.Singleton.TileMap.cellBounds.xMin,
+                    ny + StageManager.Singleton.TileMap.cellBounds.yMin,
+                    0));
+
+            nextCell += StageManager.Singleton.TileMap.cellSize * 0.5f;
 
             targetWorldPos = nextCell;
             hasTarget = true;

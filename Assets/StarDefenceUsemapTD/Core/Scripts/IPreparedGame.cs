@@ -10,5 +10,7 @@ namespace STARTD.Core
         Gold Gold { get; }
         Stage.Stage Stage { get; }
         void StartGame();
+        void RestartGame();
+        void ExitGame();
     }
 }

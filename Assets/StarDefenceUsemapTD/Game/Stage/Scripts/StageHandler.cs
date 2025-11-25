@@ -13,6 +13,6 @@ namespace STARTD.Core.Stage
             this.creator = creator;
         }
         public Stage Load(Tilemap tiles) => loader.LoadStage(tiles);
-        public bool Create(Stage data) => creator.CreateStageTiles(data);
+        public bool Change(int x, int y, int tileIdx) => creator.ChangeTile(x, y, tileIdx);
     }
 }
