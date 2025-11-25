@@ -1,3 +1,5 @@
+using UnityEngine.Tilemaps;
+
 namespace STARTD.Core.Stage
 {
     public class StageHandler
@@ -10,8 +12,7 @@ namespace STARTD.Core.Stage
             this.loader = loader;
             this.creator = creator;
         }
-
-        public Stage Load(int stageIdx) => loader.LoadStage(stageIdx);
+        public Stage Load(Tilemap tiles) => loader.LoadStage(tiles);
         public bool Create(Stage data) => creator.CreateStageTiles(data);
     }
 }

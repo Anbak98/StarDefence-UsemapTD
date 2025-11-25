@@ -1,7 +1,9 @@
+using UnityEngine.Tilemaps;
+
 namespace STARTD.Core.Stage
 {
     public interface IStageLoader
     {
-        Stage LoadStage(int stageIdx);
+        Stage LoadStage(Tilemap tiles);
     }
 }
