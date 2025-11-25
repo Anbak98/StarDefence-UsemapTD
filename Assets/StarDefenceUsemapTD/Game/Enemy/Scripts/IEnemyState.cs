@@ -1,0 +1,9 @@
+namespace STARTD.Game.Enemy
+{
+    public interface IEnemyState
+    {
+        void Enter();
+        void Execute();
+        void Exit();
+    }
+}
